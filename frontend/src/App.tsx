@@ -1,37 +1,16 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { MainLayout } from "./components/layouts/MainLayout";
-import Dashboard from "./pages/Dashboard";
-import InvoiceIssuance from "./pages/financial/InvoiceIssuance";
-import BankSlipIssuance from "./pages/financial/BankSlipIssuance";
-import CashFlow from "./pages/financial/CashFlow";
-import NotFound from "./pages/NotFound";
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import MainLayout from './components/layouts/MainLayout';
+import Dashboard from './pages/Dashboard';
 
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
+export default function App() {
+  return (
+    <Router>
+      <MainLayout>
         <Routes>
-          <Route path="/" element={<MainLayout><Dashboard /></MainLayout>} />
-          
-          {/* Financial Management Routes */}
-          <Route path="/financial/invoices" element={<MainLayout><InvoiceIssuance /></MainLayout>} />
-          <Route path="/financial/bank-slips" element={<MainLayout><BankSlipIssuance /></MainLayout>} />
-          <Route path="/financial/cash-flow" element={<MainLayout><CashFlow /></MainLayout>} />
-          
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
+          <Route path="/" element={<Dashboard />} />
+          {/* Adicione outras rotas conforme necessário */}
         </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
-
-export default App;
+      </MainLayout>
+    </Router>
+  );
+}
