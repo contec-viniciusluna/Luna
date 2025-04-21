@@ -1,6 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import MainLayout from './components/layouts/MainLayout';
-import Dashboard from './pages/Dashboard';
+import MainLayout from '@/components/layouts/MainLayout';
+import Dashboard from '@/pages/Dashboard';
+import ClientRegister from '@/pages/ClientRegister';
 
 export default function App() {
   return (
@@ -8,7 +9,7 @@ export default function App() {
       <MainLayout>
         <Routes>
           <Route path="/" element={<Dashboard />} />
-          {/* Adicione outras rotas conforme necessário */}
+          <Route path="/clientes/cadastros" element={<ClientRegister />} />
         </Routes>
       </MainLayout>
     </Router>

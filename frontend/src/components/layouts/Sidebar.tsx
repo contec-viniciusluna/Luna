@@ -1,182 +1,166 @@
+import { useState } from 'react';
+   import { cn } from '@/lib/utils';
+   import { Button } from '@/components/ui/button';
+   import { Link } from 'react-router-dom';
+   import { LayoutDashboard, FileText, Briefcase, Users, Clock, Folder, MessageSquare, Settings, HelpCircle } from 'lucide-react';
 
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { cn } from "@/lib/utils";
-import { 
-  LayoutDashboard, 
-  FileText, 
-  Calendar, 
-  Users, 
-  BarChart4, 
-  Wallet, 
-  Clock, 
-  FileCheck, 
-  MessageSquare, 
-  FolderOpen, 
-  Settings, 
-  HelpCircle, 
-  X 
-} from "lucide-react";
+   interface SidebarProps {
+     isOpen: boolean;
+     onClose: () => void;
+   }
 
-interface SidebarProps {
-  isOpen: boolean;
-  onClose: () => void;
-}
+   export function Sidebar({ isOpen, onClose }: SidebarProps) {
+     const [expandedItems, setExpandedItems] = useState<string[]>([]);
 
-interface NavItem {
-  icon: React.ElementType;
-  label: string;
-  path: string;
-  children?: { label: string; path: string }[];
-}
+     const toggleExpand = (item: string) => {
+       if (expandedItems.includes(item)) {
+         setExpandedItems(expandedItems.filter((i) => i !== item));
+       } else {
+         setExpandedItems([...expandedItems, item]);
+       }
+     };
 
-export function Sidebar({ isOpen, onClose }: SidebarProps) {
-  const [expandedItem, setExpandedItem] = useState<string | null>(null);
+     return (
+       <div
+         className={cn(
+           'fixed inset-y-0 left-0 z-50 w-64 bg-sidebar-background transform transition-transform duration-300',
+           isOpen ? 'translate-x-0' : '-translate-x-full'
+         )}
+       >
+         <div className="flex items-center justify-between p-4 border-b border-border">
+           <h2 className="text-xl font-bold">ContáPro</h2>
+           <Button variant="ghost" size="icon" onClick={onClose}>
+             <span className="sr-only">Fechar menu</span>
+             ✕
+           </Button>
+         </div>
 
-  const navItems: NavItem[] = [
-    { icon: LayoutDashboard, label: "Dashboard", path: "/" },
-    { 
-      icon: FileText, 
-      label: "Financeiro", 
-      path: "/financial",
-      children: [
-        { label: "Notas Fiscais", path: "/financial/invoices" },
-        { label: "Boletos", path: "/financial/bank-slips" },
-        { label: "Fluxo de Caixa", path: "/financial/cash-flow" },
-        { label: "Relatórios", path: "/financial/reports" },
-        { label: "Categorias", path: "/financial/categories" },
-        { label: "Conciliação", path: "/financial/reconciliation" },
-      ]
-    },
-    { 
-      icon: Calendar, 
-      label: "Obrigações", 
-      path: "/obligations",
-      children: [
-        { label: "Painel", path: "/obligations/dashboard" },
-        { label: "Guias Fiscais", path: "/obligations/tax-guides" },
-        { label: "Calendário", path: "/obligations/calendar" },
-      ]
-    },
-    { 
-      icon: Users, 
-      label: "Clientes", 
-      path: "/clients",
-      children: [
-        { label: "Cadastros", path: "/clients/list" },
-        { label: "Comunicações", path: "/clients/communications" },
-      ]
-    },
-    { 
-      icon: Clock, 
-      label: "Tarefas", 
-      path: "/tasks",
-      children: [
-        { label: "Minhas Tarefas", path: "/tasks/my-tasks" },
-        { label: "Equipe", path: "/tasks/team" },
-      ]
-    },
-    { 
-      icon: FolderOpen, 
-      label: "Documentos", 
-      path: "/documents",
-      children: [
-        { label: "Recepção", path: "/documents/reception" },
-        { label: "Armazenamento", path: "/documents/storage" },
-      ]
-    },
-    { icon: MessageSquare, label: "Meu App", path: "/client-portal" },
-  ];
+         <nav className="p-4 space-y-2">
+           <Link to="/" className="flex items-center p-2 rounded-md hover:bg-sidebar-hover">
+             <LayoutDashboard className="w-5 h-5 mr-3" />
+             Dashboard
+           </Link>
 
-  const toggleExpand = (label: string) => {
-    setExpandedItem(expandedItem === label ? null : label);
-  };
+           <div>
+             <button
+               onClick={() => toggleExpand('financeiro')}
+               className="flex items-center w-full p-2 rounded-md hover:bg-sidebar-hover"
+             >
+               <FileText className="w-5 h-5 mr-3" />
+               Financeiro
+               <span className="ml-auto">{expandedItems.includes('financeiro') ? '−' : '+'}</span>
+             </button>
+             {expandedItems.includes('financeiro') && (
+               <div className="pl-8 space-y-1">
+                 <Link to="#" className="block p-2 rounded-md hover:bg-sidebar-hover">
+                   Notas Fiscais
+                 </Link>
+                 <Link to="#" className="block p-2 rounded-md hover:bg-sidebar-hover">
+                   Boletos
+                 </Link>
+                 <Link to="#" className="block p-2 rounded-md hover:bg-sidebar-hover">
+                   Fluxo de Caixa
+                 </Link>
+                 <Link to="#" className="block p-2 rounded-md hover:bg-sidebar-hover">
+                   Relatórios
+                 </Link>
+                 <Link to="#" className="block p-2 rounded-md hover:bg-sidebar-hover">
+                   Categorias
+                 </Link>
+                 <Link to="#" className="block p-2 rounded-md hover:bg-sidebar-hover">
+                   Conciliação
+                 </Link>
+               </div>
+             )}
+           </div>
 
-  return (
-    <aside 
-      className={cn(
-        "fixed top-16 bottom-0 left-0 w-64 bg-sidebar-background text-sidebar-foreground z-40 transition-transform duration-300 overflow-y-auto",
-        isOpen ? "translate-x-0" : "-translate-x-full"
-      )}
-    >
-      <div className="p-4 flex flex-col h-full">
-        {/* Close button - mobile only */}
-        <button 
-          onClick={onClose}
-          className="lg:hidden absolute top-4 right-4 p-1 text-sidebar-foreground hover:text-white rounded-full"
-        >
-          <X size={18} />
-        </button>
+           <div>
+             <button
+               onClick={() => toggleExpand('obrigacoes')}
+               className="flex items-center w-full p-2 rounded-md hover:bg-sidebar-hover"
+             >
+               <Briefcase className="w-5 h-5 mr-3" />
+               Obrigações
+               <span className="ml-auto">{expandedItems.includes('obrigacoes') ? '−' : '+'}</span>
+             </button>
+             {expandedItems.includes('obrigacoes') && (
+               <div className="pl-8 space-y-1">
+                 <Link to="#" className="block p-2 rounded-md hover:bg-sidebar-hover">
+                   Item 1
+                 </Link>
+               </div>
+             )}
+           </div>
 
-        <nav className="mt-6 space-y-1">
-          {navItems.map((item) => (
-            <div key={item.label}>
-              <div
-                onClick={() => item.children && toggleExpand(item.label)}
-                className={cn(
-                  "flex items-center py-3 px-4 rounded-md text-sm font-medium cursor-pointer",
-                  "hover:bg-sidebar-accent transition-colors duration-200",
-                  item.children ? "justify-between" : ""
-                )}
-              >
-                <div className="flex items-center">
-                  <item.icon className="h-5 w-5 mr-3 text-sidebar-primary" />
-                  <span>{item.label}</span>
-                </div>
-                {item.children && (
-                  <svg
-                    className={cn(
-                      "h-4 w-4 transition-transform duration-200",
-                      expandedItem === item.label ? "rotate-180" : ""
-                    )}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                )}
-              </div>
+           <div>
+             <button
+               onClick={() => toggleExpand('clientes')}
+               className="flex items-center w-full p-2 rounded-md hover:bg-sidebar-hover"
+             >
+               <Users className="w-5 h-5 mr-3" />
+               Clientes
+               <span className="ml-auto">{expandedItems.includes('clientes') ? '−' : '+'}</span>
+             </button>
+             {expandedItems.includes('clientes') && (
+               <div className="pl-8 space-y-1">
+                 <Link to="/clientes/cadastros" className="block p-2 rounded-md hover:bg-sidebar-hover">
+                   Cadastros
+                 </Link>
+               </div>
+             )}
+           </div>
 
-              {item.children && expandedItem === item.label && (
-                <div className="mt-1 ml-6 space-y-1">
-                  {item.children.map((child) => (
-                    <Link
-                      key={child.path}
-                      to={child.path}
-                      className="block py-2 px-4 rounded-md text-sm text-opacity-80 hover:bg-sidebar-accent hover:text-opacity-100 transition-colors duration-200"
-                    >
-                      {child.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-        </nav>
+           <div>
+             <button
+               onClick={() => toggleExpand('tarefas')}
+               className="flex items-center w-full p-2 rounded-md hover:bg-sidebar-hover"
+             >
+               <Clock className="w-5 h-5 mr-3" />
+               Tarefas
+               <span className="ml-auto">{expandedItems.includes('tarefas') ? '−' : '+'}</span>
+             </button>
+             {expandedItems.includes('tarefas') && (
+               <div className="pl-8 space-y-1">
+                 <Link to="#" className="block p-2 rounded-md hover:bg-sidebar-hover">
+                   Item 1
+                 </Link>
+               </div>
+             )}
+           </div>
 
-        <div className="mt-auto pt-6 space-y-1">
-          <Link
-            to="/settings"
-            className="flex items-center py-3 px-4 rounded-md text-sm font-medium hover:bg-sidebar-accent transition-colors duration-200"
-          >
-            <Settings className="h-5 w-5 mr-3 text-sidebar-primary" />
-            <span>Configurações</span>
-          </Link>
-          <Link
-            to="/help"
-            className="flex items-center py-3 px-4 rounded-md text-sm font-medium hover:bg-sidebar-accent transition-colors duration-200"
-          >
-            <HelpCircle className="h-5 w-5 mr-3 text-sidebar-primary" />
-            <span>Ajuda</span>
-          </Link>
-        </div>
-      </div>
-    </aside>
-  );
-}
+           <div>
+             <button
+               onClick={() => toggleExpand('documentos')}
+               className="flex items-center w-full p-2 rounded-md hover:bg-sidebar-hover"
+             >
+               <Folder className="w-5 h-5 mr-3" />
+               Documentos
+               <span className="ml-auto">{expandedItems.includes('documentos') ? '−' : '+'}</span>
+             </button>
+             {expandedItems.includes('documentos') && (
+               <div className="pl-8 space-y-1">
+                 <Link to="#" className="block p-2 rounded-md hover:bg-sidebar-hover">
+                   Item 1
+                 </Link>
+               </div>
+             )}
+           </div>
+
+           <Link to="#" className="flex items-center p-2 rounded-md hover:bg-sidebar-hover">
+             <MessageSquare className="w-5 h-5 mr-3" />
+             Meu App
+           </Link>
+
+           <Link to="#" className="flex items-center p-2 rounded-md hover:bg-sidebar-hover">
+             <Settings className="w-5 h-5 mr-3" />
+             Configurações
+           </Link>
+
+           <Link to="#" className="flex items-center p-2 rounded-md hover:bg-sidebar-hover">
+             <HelpCircle className="w-5 h-5 mr-3" />
+             Ajuda
+           </Link>
+         </nav>
+       </div>
+     );
+   }
